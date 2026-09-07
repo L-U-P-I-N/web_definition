@@ -1,0 +1,67 @@
+name: Keep Supabase Alive
+
+on:
+  schedule:
+    # Every 5 days at 12:00 UTC
+    - cron: '0 12 */5 * *'
+
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Ping Supabase REST API
+        run: |
+          # Get environment variables from secrets
+          SUPABASE_URL="${{ secrets.SUPABASE_URL }}"
+          SUPABASE_ANON_KEY="${{ secrets.SUPABASE_ANON_KEY }}"
+
+          # Validate that secrets are not empty
+          if [ -z "$SUPABASE_URL" ]; then
+            echo "❌ Error: SUPABASE_URL secret is not set"
+            exit 1
+          fi
+
+          if [ -z "$SUPABASE_ANON_KEY" ]; then
+            echo "❌ Error: SUPABASE_ANON_KEY secret is not set"
+            exit 1
+          fi
+
+          # Make the API call to keep project alive
+          # Ping the REST API with both apikey and Authorization headers
+          echo "🔄 Pinging Supabase REST API..."
+          echo "URL: $SUPABASE_URL"
+
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X GET "$SUPABASE_URL/rest/v1/" \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+            -H "Content-Type: application/json")
+
+          echo "✅ HTTP Status: $HTTP_STATUS"
+
+          # Fail if status code is >= 500 (server error)
+          if [ "$HTTP_STATUS" -ge 500 ]; then
+            echo "❌ Error: Received HTTP $HTTP_STATUS (Server Error)"
+            exit 1
+          fi
+
+          # Success for 2xx and 3xx status codes
+          if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 400 ]; then
+            echo "✅ Successfully pinged Supabase API"
+            exit 0
+          fi
+
+          # Warn for other status codes but don't fail
+          echo "⚠️ Received HTTP $HTTP_STATUS"
+          exit 0
+
+      - name: Log timestamp
+        run: |
+          echo "✅ Keep-alive check completed at $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
