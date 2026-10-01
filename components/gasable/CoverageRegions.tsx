@@ -1,17 +1,11 @@
 "use client";
 import { useLang } from "@/context/LanguageContext";
+import { useSiteContent } from "@/context/SiteContentContext";
 import { MapPin } from "lucide-react";
-
-const cities = [
-  { ar: "الرياض", en: "Riyadh" },
-  { ar: "مكة المكرمة", en: "Makkah" },
-  { ar: "المدينة المنورة", en: "Madinah" },
-  { ar: "ينبع", en: "Yanbu" },
-  { ar: "تبوك", en: "Tabuk" },
-];
 
 export default function CoverageRegions() {
   const { lang } = useLang();
+  const { regions } = useSiteContent();
   return (
     <section className="bg-[#E8EEF9] py-[50px]">
       <div className="max-w-[1200px] mx-auto px-6 text-center">
@@ -26,9 +20,9 @@ export default function CoverageRegions() {
         </p>
 
         <div className="flex flex-wrap justify-center gap-5">
-          {cities.map((c, i) => (
+          {regions.map((c) => (
             <div
-              key={i}
+              key={c.id}
               className="bg-white rounded-2xl px-8 py-6 shadow-sm flex flex-col items-center min-w-[160px] hover:shadow-md transition-shadow"
             >
               <div className="hover-grow mb-3">

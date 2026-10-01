@@ -4,6 +4,7 @@ import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import { ChevronLeft, Target, Eye, Heart, Leaf } from "lucide-react";
 import { useLang } from "@/context/LanguageContext";
+import { useSiteContent } from "@/context/SiteContentContext";
 
 const stats = [
   { value: "2004", ar: "عام التأسيس", en: "Established" },
@@ -33,14 +34,6 @@ const values = [
     ar: { title: "الاستدامة", description: "الحفاظ على البيئة والموارد ودعم مستقبل أكثر استدامة." },
     en: { title: "Sustainability", description: "Protecting the environment and resources and supporting a more sustainable future." },
   },
-];
-
-const cities = [
-  { ar: "الرياض", en: "Riyadh" },
-  { ar: "مكة المكرمة", en: "Makkah" },
-  { ar: "المدينة المنورة", en: "Madinah" },
-  { ar: "ينبع", en: "Yanbu" },
-  { ar: "تبوك", en: "Tabuk" },
 ];
 
 const t = {
@@ -91,6 +84,7 @@ const t = {
 export default function AboutContent() {
   const { lang } = useLang();
   const L = t[lang];
+  const { regions } = useSiteContent();
 
   return (
     <>
@@ -149,8 +143,8 @@ export default function AboutContent() {
             <p className="text-brand-charcoal-light max-w-xl mx-auto">{L.coverageSub}</p>
           </div>
           <div className="flex flex-wrap justify-center gap-4">
-            {cities.map((city) => (
-              <div key={city.en} className="bg-white rounded-2xl px-8 py-4 border border-brand-green/20 shadow-sm text-center">
+            {regions.map((city) => (
+              <div key={city.id} className="bg-white rounded-2xl px-8 py-4 border border-brand-green/20 shadow-sm text-center">
                 <p className="text-brand-green-dark font-black text-lg">{lang === "ar" ? city.ar : city.en}</p>
               </div>
             ))}

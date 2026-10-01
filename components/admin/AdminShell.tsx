@@ -22,7 +22,12 @@ import {
   ChevronRight,
   FolderOpen,
   Newspaper,
+  MapPin,
+  Award,
+  HelpCircle,
+  AlertTriangle,
 } from "lucide-react";
+import { firebaseConfigured } from "@/lib/firebase";
 
 const navItems = [
   { href: "/admin/dashboard", label: "لوحة التحكم", icon: LayoutDashboard },
@@ -31,7 +36,10 @@ const navItems = [
   { href: "/admin/projects", label: "المشاريع والأعمال", icon: FolderOpen },
   { href: "/admin/news", label: "الأخبار والمقالات", icon: Newspaper },
   { href: "/admin/testimonials", label: "آراء العملاء", icon: MessageSquare },
-  { href: "/admin/stats", label: "الإحصائيات", icon: BarChart2 },
+  { href: "/admin/stats", label: "Petrohub في أرقام", icon: BarChart2 },
+  { href: "/admin/regions", label: "مناطق التغطية", icon: MapPin },
+  { href: "/admin/credentials", label: "اعتماداتنا", icon: Award },
+  { href: "/admin/faq", label: "الأسئلة الشائعة", icon: HelpCircle },
   { href: "/admin/quotes", label: "طلبات الأسعار", icon: FileText, badge: "quotes" },
   { href: "/admin/messages", label: "رسائل التواصل", icon: Mail, badge: "messages" },
   { href: "/admin/settings", label: "الإعدادات", icon: Settings },
@@ -98,7 +106,7 @@ export default function AdminShell({ children, title }: Props) {
           <div className="flex items-center gap-3">
             <span className="text-2xl font-extrabold tracking-tight">
               <span className="text-white">Petro</span>
-              <span className="text-white/70">Hop</span>
+              <span className="text-white/70">hub</span>
             </span>
           </div>
           <p className="text-white/40 text-xs mt-1">لوحة التحكم</p>
@@ -178,7 +186,17 @@ export default function AdminShell({ children, title }: Props) {
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6">{children}</main>
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6">
+          {!firebaseConfigured && (
+            <div className="mb-5 flex items-start gap-3 bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-xl text-sm">
+              <AlertTriangle size={18} className="flex-shrink-0 mt-0.5" />
+              <p>
+                قاعدة البيانات غير متصلة (متغيرات Firebase غير مضافة في Vercel). التعديلات تُحفظ في هذا المتصفح فقط ولن يراها الزوار.
+              </p>
+            </div>
+          )}
+          {children}
+        </main>
       </div>
     </div>
   );

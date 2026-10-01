@@ -1,33 +1,12 @@
 "use client";
 import { useLang } from "@/context/LanguageContext";
-import { ShieldCheck, FileCheck2, Award, Headset } from "lucide-react";
+import { useSiteContent } from "@/context/SiteContentContext";
+import { getIcon } from "@/lib/icons";
 import { StaggerGroup, StaggerItem } from "./Stagger";
-
-const items = [
-  {
-    Icon: ShieldCheck,
-    ar: { title: "الجودة والسلامة", text: "التزام كامل بأعلى معايير الجودة والسلامة المحلية والدولية في كل خدماتنا." },
-    en: { title: "Quality & Safety", text: "Full commitment to the highest local and international quality and safety standards." },
-  },
-  {
-    Icon: FileCheck2,
-    ar: { title: "تقنيات حديثة", text: "حلول رقمية ومنصة PetroHub IoT لمراقبة الاستهلاك واتخاذ قرارات دقيقة." },
-    en: { title: "Modern Technology", text: "Digital solutions and the PetroHub IoT platform for consumption monitoring and accurate decisions." },
-  },
-  {
-    Icon: Award,
-    ar: { title: "حلول مستدامة", text: "حلول طاقة تخفض الانبعاثات وتدعم مستهدفات رؤية المملكة 2030." },
-    en: { title: "Sustainable Solutions", text: "Energy solutions that cut emissions and support Saudi Vision 2030 goals." },
-  },
-  {
-    Icon: Headset,
-    ar: { title: "دعم على مدار الساعة", text: "فريق متاح 24/7 للطلبات الطارئة والاستفسارات في أي وقت." },
-    en: { title: "24/7 Support", text: "A team available 24/7 for urgent orders and inquiries any time." },
-  },
-];
 
 export default function Credentials() {
   const { lang } = useLang();
+  const { credentials } = useSiteContent();
   return (
     <section className="bg-white py-[50px]">
       <div className="max-w-[1200px] mx-auto px-6">
@@ -42,18 +21,20 @@ export default function Credentials() {
         </p>
 
         <StaggerGroup className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {items.map(({ Icon, ...c }, i) => {
-            const content = lang === "ar" ? c.ar : c.en;
+          {credentials.map((c) => {
+            const Icon = getIcon(c.icon);
+            const title = lang === "ar" ? c.titleAr : c.titleEn;
+            const text = lang === "ar" ? c.textAr : c.textEn;
             return (
               <StaggerItem
-                key={i}
+                key={c.id}
                 className="rounded-2xl border border-gray-100 p-7 text-center hover:shadow-lg hover:border-[#0C2D6B]/20 transition-all duration-300"
               >
                 <div className="hover-grow mb-5 flex justify-center">
                   <Icon size={48} stroke="url(#fl-grad)" strokeWidth={1.5} />
                 </div>
-                <h3 className="text-lg font-bold text-brand-green-dark mb-2">{content.title}</h3>
-                <p className="text-[#54595F] text-sm leading-6">{content.text}</p>
+                <h3 className="text-lg font-bold text-brand-green-dark mb-2">{title}</h3>
+                <p className="text-[#54595F] text-sm leading-6">{text}</p>
               </StaggerItem>
             );
           })}

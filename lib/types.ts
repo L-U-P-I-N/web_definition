@@ -29,6 +29,31 @@ export interface StatItem {
   id: string;
   value: string;
   label: string;
+  labelEn?: string;
+  icon?: string;
+}
+
+export interface Region {
+  id: string;
+  ar: string;
+  en: string;
+}
+
+export interface CredentialItem {
+  id: string;
+  icon: string;
+  titleAr: string;
+  titleEn: string;
+  textAr: string;
+  textEn: string;
+}
+
+export interface FaqItem {
+  id: string;
+  qAr: string;
+  aAr: string;
+  qEn: string;
+  aEn: string;
 }
 
 export interface ProjectItem {
@@ -79,8 +104,10 @@ export interface SiteSettings {
   phone: string;
   whatsapp: string;
   email: string;
-  address: string;
-  workingHours: string;
-  cities: string;
+  addressAr: string;
+  addressEn: string;
+  mapQuery: string;
+  workingHoursAr: string;
+  workingHoursEn: string;
   adminPassword: string;
 }

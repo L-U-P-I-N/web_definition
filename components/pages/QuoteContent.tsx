@@ -4,6 +4,7 @@ import Badge from "@/components/ui/Badge";
 import QuoteForm from "@/components/sections/QuoteForm";
 import { ChevronLeft, Clock, CheckCircle2, Headphones } from "lucide-react";
 import { useLang } from "@/context/LanguageContext";
+import { useSiteContent } from "@/context/SiteContentContext";
 
 const promises = [
   {
@@ -23,14 +24,6 @@ const promises = [
   },
 ];
 
-const cities = [
-  { ar: "الرياض", en: "Riyadh" },
-  { ar: "مكة المكرمة", en: "Makkah" },
-  { ar: "المدينة المنورة", en: "Madinah" },
-  { ar: "ينبع", en: "Yanbu" },
-  { ar: "تبوك", en: "Tabuk" },
-];
-
 const t = {
   ar: {
     home: "الرئيسية", quote: "اطلب عرض سعر", badge: "عرض سعر مجاني",
@@ -47,6 +40,7 @@ const t = {
 export default function QuoteContent() {
   const { lang } = useLang();
   const L = t[lang];
+  const { regions } = useSiteContent();
 
   return (
     <>
@@ -93,8 +87,8 @@ export default function QuoteContent() {
               <div className="bg-gradient-to-br from-brand-green-dark to-brand-green-mid rounded-3xl p-7 text-white">
                 <p className="font-black text-brand-gold text-lg mb-4">{L.coverage}</p>
                 <div className="flex flex-wrap gap-2">
-                  {cities.map((city) => (
-                    <span key={city.en} className="bg-white/15 text-white text-sm font-bold px-3 py-1.5 rounded-full">
+                  {regions.map((city) => (
+                    <span key={city.id} className="bg-white/15 text-white text-sm font-bold px-3 py-1.5 rounded-full">
                       {lang === "ar" ? city.ar : city.en}
                     </span>
                   ))}

@@ -4,6 +4,7 @@ import Button from "@/components/ui/Button";
 import { CheckCircle2 } from "lucide-react";
 import { addQuote } from "@/lib/db";
 import { useLang } from "@/context/LanguageContext";
+import { useSiteContent } from "@/context/SiteContentContext";
 
 const activityTypes = [
   { ar: "المقاولات والإنشاءات", en: "Contracting & Construction" },
@@ -20,15 +21,6 @@ const serviceOptions = [
   { val: "sewage", ar: "سحب بيارات وصرف صحي", en: "Septic & sewage pumping" },
   { val: "water", ar: "إمداد مائي (مياه تحلية / شرب)", en: "Water supply (desalinated / drinking)" },
   { val: "generators", ar: "تأجير مولدات كهربائية", en: "Generator rental" },
-];
-
-const cityOptions = [
-  { ar: "الرياض", en: "Riyadh" },
-  { ar: "مكة المكرمة", en: "Makkah" },
-  { ar: "المدينة المنورة", en: "Madinah" },
-  { ar: "ينبع", en: "Yanbu" },
-  { ar: "تبوك", en: "Tabuk" },
-  { ar: "أخرى", en: "Other" },
 ];
 
 const tq = {
@@ -63,6 +55,8 @@ const tq = {
 export default function QuoteForm() {
   const { lang } = useLang();
   const L = tq[lang];
+  const { regions } = useSiteContent();
+  const cityOptions = [...regions, { id: "other", ar: "أخرى", en: "Other" }];
   const [form, setForm] = useState({
     name: "",
     phone: "",
@@ -201,7 +195,7 @@ export default function QuoteForm() {
           >
             <option value="">{L.chooseCity}</option>
             {cityOptions.map((c) => (
-              <option key={c.en} value={lang === "ar" ? c.ar : c.en}>{lang === "ar" ? c.ar : c.en}</option>
+              <option key={c.id} value={lang === "ar" ? c.ar : c.en}>{lang === "ar" ? c.ar : c.en}</option>
             ))}
           </select>
         </div>

@@ -1,10 +1,12 @@
 "use client";
 import { motion } from "framer-motion";
+import { useSiteContent, waHref } from "@/context/SiteContentContext";
 
 export default function WhatsAppButton() {
+  const { settings } = useSiteContent();
   return (
     <motion.a
-      href="https://wa.me/966500000000"
+      href={waHref(settings.whatsapp)}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="تواصل معنا عبر واتساب"

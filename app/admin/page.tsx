@@ -2,6 +2,7 @@
 import { useState, useEffect, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { doLogin, checkAuth } from "@/lib/store";
+import { getSettings } from "@/lib/db";
 import { Eye, EyeOff, Lock, ShieldCheck } from "lucide-react";
 
 export default function AdminLoginPage() {
@@ -15,18 +16,21 @@ export default function AdminLoginPage() {
     if (checkAuth()) router.push("/admin/dashboard");
   }, [router]);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
-    setTimeout(() => {
-      if (doLogin(password)) {
+    try {
+      const { adminPassword } = await getSettings();
+      if (doLogin(password, adminPassword)) {
         router.push("/admin/dashboard");
-      } else {
-        setError("كلمة المرور غير صحيحة. يرجى المحاولة مجدداً.");
-        setLoading(false);
+        return;
       }
-    }, 600);
+      setError("كلمة المرور غير صحيحة. يرجى المحاولة مجدداً.");
+    } catch {
+      setError("تعذّر الاتصال بقاعدة البيانات. حاول مرة أخرى.");
+    }
+    setLoading(false);
   };
 
   return (
@@ -47,7 +51,7 @@ export default function AdminLoginPage() {
             <div className="absolute top-0 inset-x-0 h-1 bg-[#0067E3]" />
             <h1 className="text-3xl font-extrabold tracking-tight mb-1">
               <span className="text-white">Petro</span>
-              <span className="text-white/70">Hop</span>
+              <span className="text-white/70">hub</span>
             </h1>
             <p className="text-white/60 text-sm">لوحة التحكم الإدارية</p>
           </div>

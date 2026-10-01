@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import AdminShell from "@/components/admin/AdminShell";
 import { getSettings, setSettings } from "@/lib/db";
+import { defaultSettings } from "@/lib/store";
 import type { SiteSettings } from "@/lib/types";
 import { Save, Eye, EyeOff } from "lucide-react";
 
@@ -9,25 +10,19 @@ const inputCls =
   "w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-brand-green focus:ring-2 focus:ring-brand-green/20 outline-none transition-all bg-gray-50 text-brand-charcoal placeholder:text-brand-charcoal-light/50 text-sm";
 
 export default function SettingsPage() {
-  const [form, setForm] = useState<SiteSettings>({
-    phone: "",
-    whatsapp: "",
-    email: "",
-    address: "",
-    workingHours: "",
-    cities: "",
-    adminPassword: "",
-  });
-  const [saved, setSaved] = useState(false);
+  const [form, setForm] = useState<SiteSettings>(defaultSettings);
+  const [status, setStatus] = useState<{ ok: boolean; msg: string } | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
   useEffect(() => {
-    getSettings().then((s) => {
-      setForm(s);
-      setConfirmPassword(s.adminPassword);
-    });
+    getSettings()
+      .then((s) => {
+        setForm(s);
+        setConfirmPassword(s.adminPassword);
+      })
+      .catch(() => setStatus({ ok: false, msg: "تعذّر تحميل الإعدادات من قاعدة البيانات." }));
   }, []);
 
   const change = (field: keyof SiteSettings, val: string) => {
@@ -44,26 +39,40 @@ export default function SettingsPage() {
       setPasswordError("كلمة المرور يجب أن تكون 6 أحرف على الأقل");
       return;
     }
-    await setSettings(form);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    try {
+      await setSettings(form);
+      setStatus({ ok: true, msg: "✓ تم حفظ الإعدادات — ظاهرة الآن في الهيدر والفوتر وصفحة اتصل بنا وزر واتساب" });
+    } catch {
+      setStatus({ ok: false, msg: "فشل الحفظ. تحقق من اتصال قاعدة البيانات وحاول مجدداً." });
+    }
   };
 
-  const fields: { key: keyof SiteSettings; label: string; placeholder: string; type?: string }[] = [
-    { key: "phone", label: "رقم الهاتف", placeholder: "+966500000000", type: "tel" },
-    { key: "whatsapp", label: "رقم واتساب", placeholder: "+966500000000", type: "tel" },
-    { key: "email", label: "البريد الإلكتروني", placeholder: "info@petrohub.sa", type: "email" },
-    { key: "address", label: "العنوان", placeholder: "طريق الملك فهد، الرياض" },
-    { key: "workingHours", label: "ساعات العمل", placeholder: "الأحد – الخميس، 8 صباحاً – 6 مساءً" },
-    { key: "cities", label: "المدن التي نخدمها", placeholder: "الرياض، جدة، الدمام" },
+  const fields: { key: keyof SiteSettings; label: string; placeholder: string; type?: string; dir: "rtl" | "ltr" }[] = [
+    { key: "phone", label: "الرقم الموحّد / الهاتف", placeholder: "+966500000000", type: "tel", dir: "ltr" },
+    { key: "whatsapp", label: "رقم واتساب", placeholder: "+966500000000", type: "tel", dir: "ltr" },
+    { key: "email", label: "البريد الإلكتروني", placeholder: "admin@petrohob-sa.com", type: "email", dir: "ltr" },
+    { key: "addressAr", label: "العنوان بالعربي", placeholder: "طريق الملك فهد، الرياض", dir: "rtl" },
+    { key: "addressEn", label: "العنوان بالإنجليزي", placeholder: "King Fahd Road, Riyadh", dir: "ltr" },
+    { key: "mapQuery", label: "موقع الخريطة (اسم المكان أو الإحداثيات)", placeholder: "24.7136,46.6753", dir: "ltr" },
+    { key: "workingHoursAr", label: "ساعات العمل بالعربي", placeholder: "الأحد – الخميس، 8 صباحاً – 6 مساءً", dir: "rtl" },
+    { key: "workingHoursEn", label: "ساعات العمل بالإنجليزي", placeholder: "Sun – Thu, 8 AM – 6 PM", dir: "ltr" },
   ];
 
   return (
     <AdminShell title="إعدادات الموقع">
       <div className="max-w-2xl space-y-6">
-        {saved && (
-          <div className="bg-brand-green-light border border-brand-green/20 text-brand-green px-4 py-3 rounded-xl text-sm font-bold">
-            ✓ تم حفظ الإعدادات
+        <p className="text-brand-charcoal-light text-sm">
+          مناطق التغطية لها صفحة خاصة في القائمة الجانبية («مناطق التغطية»).
+        </p>
+        {status && (
+          <div
+            className={`px-4 py-3 rounded-xl text-sm font-bold border ${
+              status.ok
+                ? "bg-brand-green-light border-brand-green/20 text-brand-green"
+                : "bg-red-50 border-red-200 text-red-600"
+            }`}
+          >
+            {status.msg}
           </div>
         )}
 
@@ -84,7 +93,7 @@ export default function SettingsPage() {
                   value={form[f.key]}
                   onChange={(e) => change(f.key, e.target.value)}
                   placeholder={f.placeholder}
-                  dir="ltr"
+                  dir={f.dir}
                 />
               </div>
             ))}

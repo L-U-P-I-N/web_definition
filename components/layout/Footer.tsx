@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Mail, Phone, MapPin, MessageCircle, ExternalLink } from "lucide-react";
 import { siteImages } from "@/lib/images";
 import { useLang } from "@/context/LanguageContext";
+import { useSiteContent, telHref, waHref } from "@/context/SiteContentContext";
 import Logo from "@/components/ui/Logo";
 
 const services = [
@@ -47,7 +48,6 @@ const labels = {
     contact: "تواصل معنا",
     tagline: "للخدمات اللوجستية والبترولية",
     whatsapp: "واتساب",
-    address: "طريق الملك فهد، الرياض، المملكة العربية السعودية",
     social: "تابعنا على وسائل التواصل الاجتماعي",
     rights: "جميع الحقوق محفوظة.",
     privacy: "سياسة الخصوصية",
@@ -62,7 +62,6 @@ const labels = {
     contact: "Contact Us",
     tagline: "Logistics & Petroleum Services",
     whatsapp: "WhatsApp",
-    address: "King Fahd Road, Riyadh, Saudi Arabia",
     social: "Follow us on social media",
     rights: "All rights reserved.",
     privacy: "Privacy Policy",
@@ -104,6 +103,7 @@ const socials = [
 export default function Footer() {
   const { lang } = useLang();
   const L = labels[lang];
+  const { settings } = useSiteContent();
   return (
     <footer
       className="text-white relative overflow-hidden"
@@ -191,28 +191,28 @@ export default function Footer() {
             <h3 className="text-sm font-bold text-white mb-4 inline-block border-b-2 border-[#0067E3] pb-1">{L.contact}</h3>
             <ul className="space-y-3">
               <li>
-                <a href="mailto:info@petrohub.sa" className="flex items-center gap-2.5 text-white/70 hover:text-white text-sm transition-colors duration-200">
+                <a href={`mailto:${settings.email}`} className="flex items-center gap-2.5 text-white/70 hover:text-white text-sm transition-colors duration-200">
                   <Mail size={15} className="flex-shrink-0" />
-                  info@petrohub.sa
+                  {settings.email}
                 </a>
               </li>
               <li>
-                <a href="tel:+966500000000" className="flex items-center gap-2.5 text-white/70 hover:text-white text-sm transition-colors duration-200">
+                <a href={telHref(settings.phone)} className="flex items-center gap-2.5 text-white/70 hover:text-white text-sm transition-colors duration-200">
                   <Phone size={15} className="flex-shrink-0" />
-                  +966 500 000 000
+                  <span dir="ltr">{settings.phone}</span>
                 </a>
               </li>
               <li>
-                <a href="https://wa.me/966500000000" target="_blank" rel="noopener noreferrer"
+                <a href={waHref(settings.whatsapp)} target="_blank" rel="noopener noreferrer"
                   className="flex items-center gap-2.5 text-white/70 hover:text-white text-sm transition-colors duration-200">
                   <MessageCircle size={15} className="flex-shrink-0" />
-                  {L.whatsapp}: +966 500 000 000
+                  {L.whatsapp}: <span dir="ltr">{settings.whatsapp}</span>
                 </a>
               </li>
               <li>
                 <div className="flex items-start gap-2.5 text-white/70 text-sm">
                   <MapPin size={15} className="flex-shrink-0 mt-0.5" />
-                  <span>{L.address}</span>
+                  <span>{lang === "ar" ? settings.addressAr : settings.addressEn}</span>
                 </div>
               </li>
             </ul>

@@ -4,22 +4,7 @@ import Badge from "@/components/ui/Badge";
 import ContactForm from "@/components/sections/ContactForm";
 import { ChevronLeft, Phone, Mail, MapPin, Clock, MessageCircle } from "lucide-react";
 import { useLang } from "@/context/LanguageContext";
-
-const contactInfo = [
-  { icon: Phone, ar: "الرقم الموحّد", en: "Unified Number", value: "+966500000000", href: "tel:+966500000000", color: "bg-brand-green" },
-  { icon: MessageCircle, ar: "واتساب للأعمال", en: "Business WhatsApp", value: "+966500000000", href: "https://wa.me/966500000000", color: "bg-[#25D366]" },
-  { icon: Mail, ar: "البريد الإلكتروني", en: "Email", value: "info@petrohub.sa", href: "mailto:info@petrohub.sa", color: "bg-[#0C2D6B]" },
-  { icon: Clock, ar: "ساعات العمل", en: "Working Hours", valueAr: "الأحد – الخميس، 8 ص – 6 م", valueEn: "Sun – Thu, 8 AM – 6 PM", href: undefined, color: "bg-brand-gold" },
-  { icon: MapPin, ar: "العنوان", en: "Address", valueAr: "طريق الملك فهد، الرياض، المملكة العربية السعودية", valueEn: "King Fahd Road, Riyadh, Saudi Arabia", href: undefined, color: "bg-[#24487B]" },
-];
-
-const cities = [
-  { ar: "الرياض", en: "Riyadh" },
-  { ar: "مكة المكرمة", en: "Makkah" },
-  { ar: "المدينة المنورة", en: "Madinah" },
-  { ar: "ينبع", en: "Yanbu" },
-  { ar: "تبوك", en: "Tabuk" },
-];
+import { useSiteContent, telHref, waHref } from "@/context/SiteContentContext";
 
 const t = {
   ar: {
@@ -41,6 +26,14 @@ const t = {
 export default function ContactContent() {
   const { lang } = useLang();
   const L = t[lang];
+  const { settings, regions } = useSiteContent();
+  const contactInfo = [
+    { icon: Phone, ar: "الرقم الموحّد", en: "Unified Number", value: settings.phone, href: telHref(settings.phone), color: "bg-brand-green", ltr: true },
+    { icon: MessageCircle, ar: "واتساب للأعمال", en: "Business WhatsApp", value: settings.whatsapp, href: waHref(settings.whatsapp), color: "bg-[#25D366]", ltr: true },
+    { icon: Mail, ar: "البريد الإلكتروني", en: "Email", value: settings.email, href: `mailto:${settings.email}`, color: "bg-[#0C2D6B]", ltr: true },
+    { icon: Clock, ar: "ساعات العمل", en: "Working Hours", value: lang === "ar" ? settings.workingHoursAr : settings.workingHoursEn, color: "bg-brand-gold" },
+    { icon: MapPin, ar: "العنوان", en: "Address", value: lang === "ar" ? settings.addressAr : settings.addressEn, color: "bg-[#24487B]" },
+  ];
 
   return (
     <>
@@ -72,8 +65,7 @@ export default function ContactContent() {
                 <div className="space-y-4">
                   {contactInfo.map((info) => {
                     const label = lang === "ar" ? info.ar : info.en;
-                    const value =
-                      "valueAr" in info ? (lang === "ar" ? info.valueAr : info.valueEn) : info.value;
+                    const value = info.value;
                     return (
                       <div key={info.en} className="flex items-start gap-4 p-5 bg-white rounded-2xl border border-gray-100 hover:border-brand-green/20 hover:shadow-md transition-all duration-200">
                         <div className={`w-12 h-12 rounded-xl ${info.color} flex items-center justify-center flex-shrink-0`}>
@@ -82,7 +74,7 @@ export default function ContactContent() {
                         <div>
                           <p className="text-brand-charcoal-light text-xs font-medium mb-0.5">{label}</p>
                           {info.href ? (
-                            <a href={info.href} className="text-brand-charcoal font-bold hover:text-brand-green transition-colors"
+                            <a href={info.href} dir={info.ltr ? "ltr" : undefined} className="text-brand-charcoal font-bold hover:text-brand-green transition-colors"
                               target={info.href.startsWith("http") ? "_blank" : undefined}
                               rel={info.href.startsWith("http") ? "noopener noreferrer" : undefined}>
                               {value}
@@ -100,8 +92,8 @@ export default function ContactContent() {
               <div className="bg-white rounded-3xl p-7 border border-gray-100">
                 <h3 className="font-black text-brand-charcoal mb-4">{L.citiesTitle}</h3>
                 <div className="flex flex-wrap gap-3">
-                  {cities.map((city) => (
-                    <span key={city.en} className="px-5 py-2.5 bg-brand-green-light text-brand-green rounded-full font-bold text-sm border border-brand-green/20">
+                  {regions.map((city) => (
+                    <span key={city.id} className="px-5 py-2.5 bg-brand-green-light text-brand-green rounded-full font-bold text-sm border border-brand-green/20">
                       {lang === "ar" ? city.ar : city.en}
                     </span>
                   ))}

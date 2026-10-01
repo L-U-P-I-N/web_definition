@@ -1,12 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
 import AdminShell from "@/components/admin/AdminShell";
-import { getProjects, setProjects, addProject, deleteProject } from "@/lib/db";
+import { getProjects, setProjects, addProject, deleteProject, getRegions } from "@/lib/db";
 import type { ProjectItem } from "@/lib/types";
 import { Plus, Pencil, Trash2, X, Save, MapPin, Tag } from "lucide-react";
 
 const categories = ["خدمات بترولية", "حلول بيئية", "إمداد مائي", "طاقة بديلة", "حلول متكاملة"];
-const cities = ["الرياض", "مكة المكرمة", "المدينة المنورة", "ينبع", "تبوك"];
 
 const inputCls = "w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-brand-green focus:ring-2 focus:ring-brand-green/20 outline-none transition-all bg-gray-50 text-brand-charcoal placeholder:text-brand-charcoal-light/50 text-sm";
 
@@ -22,8 +21,12 @@ export default function AdminProjectsPage() {
   const [adding, setAdding] = useState(false);
   const [form, setForm] = useState<Omit<ProjectItem, "id">>(empty);
   const [saved, setSaved] = useState(false);
+  const [cities, setCities] = useState<string[]>([]);
 
-  useEffect(() => { getProjects().then(setLocal); }, []);
+  useEffect(() => {
+    getProjects().then(setLocal);
+    getRegions().then((r) => setCities(r.map((c) => c.ar)));
+  }, []);
 
   const save = async () => {
     if (!form.title.trim()) return;

@@ -7,13 +7,16 @@ import {
   getDoc,
   updateDoc,
 } from "firebase/firestore";
-import { db } from "./firebase";
+import { db, firebaseConfigured } from "./firebase";
 import type {
   HeroSlide,
   ServiceItem,
   Testimonial,
   StatItem,
   SiteSettings,
+  Region,
+  CredentialItem,
+  FaqItem,
   QuoteRequest,
   ContactMessage,
   ProjectItem,
@@ -25,6 +28,9 @@ import {
   defaultTestimonials,
   defaultStats,
   defaultSettings,
+  defaultRegions,
+  defaultCredentials,
+  defaultFaqs,
   defaultProjects,
   defaultPosts,
 } from "./store";
@@ -86,47 +92,63 @@ export async function setTestimonials(testimonials: Testimonial[]): Promise<void
   for (const t of testimonials) await setDoc(doc(db, "testimonials", t.id), t);
 }
 
-// ── Stats ─────────────────────────────────────────────────────────────────────
+// ── Config documents (settings, stats, regions, credentials, FAQ) ────────────
+// Without Firebase env vars these fall back to localStorage so the site still renders.
 
-export async function getStats(): Promise<StatItem[]> {
-  const snap = await getDoc(doc(db, "config", "stats"));
-  if (!snap.exists()) {
-    await setDoc(doc(db, "config", "stats"), { items: defaultStats });
-    return defaultStats;
+const LOCAL_PREFIX = "pn_config_";
+
+async function readConfig<T>(name: string): Promise<T | undefined> {
+  if (!firebaseConfigured) {
+    if (typeof window === "undefined") return undefined;
+    const raw = localStorage.getItem(LOCAL_PREFIX + name);
+    return raw ? (JSON.parse(raw) as T) : undefined;
   }
-  return (snap.data() as { items: StatItem[] }).items;
+  const snap = await getDoc(doc(db, "config", name));
+  return snap.exists() ? (snap.data() as T) : undefined;
 }
 
-export async function setStats(stats: StatItem[]): Promise<void> {
-  await setDoc(doc(db, "config", "stats"), { items: stats });
+async function writeConfig<T extends object>(name: string, value: T): Promise<void> {
+  if (!firebaseConfigured) {
+    localStorage.setItem(LOCAL_PREFIX + name, JSON.stringify(value));
+    return;
+  }
+  await setDoc(doc(db, "config", name), value);
 }
 
-// ── Settings ─────────────────────────────────────────────────────────────────
+async function getList<T>(name: string, defaults: T[]): Promise<T[]> {
+  const data = await readConfig<{ items: T[] }>(name);
+  return data?.items ?? defaults;
+}
+
+const setList = <T,>(name: string, items: T[]) => writeConfig(name, { items });
+
+export const getStats = () => getList<StatItem>("stats", defaultStats);
+export const setStats = (items: StatItem[]) => setList("stats", items);
+
+export const getRegions = () => getList<Region>("regions", defaultRegions);
+export const setRegions = (items: Region[]) => setList("regions", items);
+
+export const getCredentials = () => getList<CredentialItem>("credentials", defaultCredentials);
+export const setCredentials = (items: CredentialItem[]) => setList("credentials", items);
+
+export const getFaqs = () => getList<FaqItem>("faqs", defaultFaqs);
+export const setFaqs = (items: FaqItem[]) => setList("faqs", items);
+
+type LegacySettings = Partial<SiteSettings> & { address?: string; workingHours?: string };
 
 export async function getSettings(): Promise<SiteSettings> {
-  const snap = await getDoc(doc(db, "config", "settings"));
-  if (!snap.exists()) {
-    await setDoc(doc(db, "config", "settings"), defaultSettings);
-    // Cache password for auth
-    if (typeof window !== "undefined") {
-      localStorage.setItem("pn_cached_password", defaultSettings.adminPassword);
-    }
-    return defaultSettings;
-  }
-  const settings = snap.data() as SiteSettings;
-  // Cache password for auth
-  if (typeof window !== "undefined") {
-    localStorage.setItem("pn_cached_password", settings.adminPassword);
-  }
+  const data = (await readConfig<LegacySettings>("settings")) ?? {};
+  const settings: SiteSettings = {
+    ...defaultSettings,
+    ...data,
+    addressAr: data.addressAr ?? data.address ?? defaultSettings.addressAr,
+    workingHoursAr: data.workingHoursAr ?? data.workingHours ?? defaultSettings.workingHoursAr,
+  };
   return settings;
 }
 
 export async function setSettings(settings: SiteSettings): Promise<void> {
-  await setDoc(doc(db, "config", "settings"), settings);
-  // Update cache
-  if (typeof window !== "undefined") {
-    localStorage.setItem("pn_cached_password", settings.adminPassword);
-  }
+  await writeConfig("settings", settings);
 }
 
 // ── Projects ─────────────────────────────────────────────────────────────────

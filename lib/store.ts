@@ -4,6 +4,9 @@ import type {
   Testimonial,
   StatItem,
   SiteSettings,
+  Region,
+  CredentialItem,
+  FaqItem,
   QuoteRequest,
   ContactMessage,
   ProjectItem,
@@ -148,10 +151,80 @@ export const defaultTestimonials: Testimonial[] = [
 ];
 
 export const defaultStats: StatItem[] = [
-  { id: "1", value: "7", label: "خدمات وحلول متكاملة" },
-  { id: "2", value: "5+", label: "مناطق تغطية في المملكة" },
-  { id: "3", value: "24/7", label: "تشغيل ومراقبة متواصلة" },
-  { id: "4", value: "30%", label: "خفض في استهلاك الطاقة" },
+  { id: "1", value: "7", label: "خدمات وحلول متكاملة", labelEn: "Integrated Services", icon: "Boxes" },
+  { id: "2", value: "5+", label: "مناطق تغطية في المملكة", labelEn: "Coverage Regions", icon: "MapPin" },
+  { id: "3", value: "24/7", label: "تشغيل ومراقبة متواصلة", labelEn: "Operation & Monitoring", icon: "Clock" },
+  { id: "4", value: "30%", label: "خفض في استهلاك الطاقة", labelEn: "Energy Savings", icon: "Leaf" },
+  { id: "5", value: "100%", label: "التزام بالجودة والسلامة", labelEn: "Quality & Safety", icon: "BadgeCheck" },
+];
+
+export const defaultRegions: Region[] = [
+  { id: "1", ar: "الرياض", en: "Riyadh" },
+  { id: "2", ar: "مكة المكرمة", en: "Makkah" },
+  { id: "3", ar: "المدينة المنورة", en: "Madinah" },
+  { id: "4", ar: "ينبع", en: "Yanbu" },
+  { id: "5", ar: "تبوك", en: "Tabuk" },
+];
+
+export const defaultCredentials: CredentialItem[] = [
+  {
+    id: "1", icon: "ShieldCheck",
+    titleAr: "الجودة والسلامة", textAr: "التزام كامل بأعلى معايير الجودة والسلامة المحلية والدولية في كل خدماتنا.",
+    titleEn: "Quality & Safety", textEn: "Full commitment to the highest local and international quality and safety standards.",
+  },
+  {
+    id: "2", icon: "FileCheck2",
+    titleAr: "تقنيات حديثة", textAr: "حلول رقمية ومنصة PetroHub IoT لمراقبة الاستهلاك واتخاذ قرارات دقيقة.",
+    titleEn: "Modern Technology", textEn: "Digital solutions and the PetroHub IoT platform for consumption monitoring and accurate decisions.",
+  },
+  {
+    id: "3", icon: "Award",
+    titleAr: "حلول مستدامة", textAr: "حلول طاقة تخفض الانبعاثات وتدعم مستهدفات رؤية المملكة 2030.",
+    titleEn: "Sustainable Solutions", textEn: "Energy solutions that cut emissions and support Saudi Vision 2030 goals.",
+  },
+  {
+    id: "4", icon: "Headset",
+    titleAr: "دعم على مدار الساعة", textAr: "فريق متاح 24/7 للطلبات الطارئة والاستفسارات في أي وقت.",
+    titleEn: "24/7 Support", textEn: "A team available 24/7 for urgent orders and inquiries any time.",
+  },
+];
+
+export const defaultFaqs: FaqItem[] = [
+  {
+    id: "1",
+    qAr: "ما الخدمات التي تقدّمها Petrohub؟",
+    aAr: "نقدّم سبع خدمات متكاملة: توريد غاز البترول المسال (LPG)، المنتجات البترولية، خدمات المياه والبيئة، حلول الطاقة، منصة PetroHub IoT، الخدمات اللوجستية، وأنظمة تتبع ومراقبة المركبات.",
+    qEn: "What services does Petrohub offer?",
+    aEn: "We provide seven integrated services: LPG supply, petroleum products, water & environmental services, energy solutions, the PetroHub IoT platform, logistics services, and vehicle tracking & monitoring systems.",
+  },
+  {
+    id: "2",
+    qAr: "ما المناطق التي تغطّيها خدماتكم؟",
+    aAr: "نغطّي شبكة تشغيل واسعة تشمل {regions}، مع إمكانية التنسيق لمناطق أخرى حسب الطلب.",
+    qEn: "Which regions do your services cover?",
+    aEn: "We cover a wide operational network including {regions}, with the ability to coordinate for other regions on request.",
+  },
+  {
+    id: "3",
+    qAr: "كيف تضمنون معايير السلامة والجودة؟",
+    aAr: "نلتزم بأعلى معايير السلامة المحلية والدولية في جميع مراحل النقل والتسليم، باستخدام أسطول حديث مجهّز بأحدث أنظمة الأمان وفرق متخصصة مدرّبة.",
+    qEn: "How do you ensure safety and quality standards?",
+    aEn: "We comply with the highest local and international safety standards across every transport and delivery stage, using a modern fleet equipped with the latest safety systems and trained specialized teams.",
+  },
+  {
+    id: "4",
+    qAr: "ما هي منصة PetroHub IoT؟",
+    aAr: "منصة رقمية ذكية لمراقبة استهلاك الطاقة والمعدات في الوقت الفعلي، تساعد على خفض الاستهلاك حتى 30% وتقليل الأعطال عبر الصيانة الوقائية والتنبيهات الذكية.",
+    qEn: "What is the PetroHub IoT platform?",
+    aEn: "A smart digital platform for real-time monitoring of energy and equipment consumption, helping cut consumption by up to 30% and reduce breakdowns through preventive maintenance and smart alerts.",
+  },
+  {
+    id: "5",
+    qAr: "كيف أحصل على عرض سعر؟",
+    aAr: "يمكنك طلب عرض سعر مخصّص عبر صفحة \"اطلب عرض سعر\"، وسيتواصل معك فريقنا خلال 24 ساعة بعرض مصمّم وفق احتياجاتك.",
+    qEn: "How do I get a quote?",
+    aEn: "You can request a custom quote via the \"Get a Quote\" page, and our team will contact you within 24 hours with an offer tailored to your needs.",
+  },
 ];
 
 export const defaultProjects: ProjectItem[] = [
@@ -272,9 +345,11 @@ export const defaultSettings: SiteSettings = {
   phone: "+966500000000",
   whatsapp: "+966500000000",
   email: "info@petrohub.sa",
-  address: "طريق الملك فهد، الرياض، المملكة العربية السعودية",
-  workingHours: "الأحد – الخميس، 8 صباحاً – 6 مساءً",
-  cities: "الرياض، مكة المكرمة، المدينة المنورة، ينبع، تبوك",
+  addressAr: "طريق الملك فهد، الرياض، المملكة العربية السعودية",
+  addressEn: "King Fahd Road, Riyadh, Saudi Arabia",
+  mapQuery: "King Fahd Road, Riyadh, Saudi Arabia",
+  workingHoursAr: "الأحد – الخميس، 8 صباحاً – 6 مساءً",
+  workingHoursEn: "Sun – Thu, 8 AM – 6 PM",
   adminPassword: "petrohub2024",
 };
 
@@ -347,13 +422,7 @@ export const checkAuth = (): boolean => {
   return sessionStorage.getItem(AUTH_KEY) === "true";
 };
 
-export const doLogin = (password: string): boolean => {
-  // Try cached password from Firestore (set by getSettings in db.ts)
-  const cachedPassword =
-    typeof window !== "undefined"
-      ? localStorage.getItem("pn_cached_password")
-      : null;
-  const expectedPassword = cachedPassword ?? defaultSettings.adminPassword;
+export const doLogin = (password: string, expectedPassword: string): boolean => {
   if (password === expectedPassword) {
     sessionStorage.setItem(AUTH_KEY, "true");
     return true;
